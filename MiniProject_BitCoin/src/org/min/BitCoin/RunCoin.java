@@ -3,7 +3,7 @@ package org.min.BitCoin;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
-public class RunCoin {
+public class RunCoin implements Runnable {
 	DecimalFormat formatter = new  DecimalFormat("###,###.##");
 	Scanner sc;
 	BitCoin bitCoin ;
@@ -80,7 +80,7 @@ public class RunCoin {
 	
 	public void sellCoin() {
 		System.out.println("어떤 코인을 팔겠습니까?");
-		System.out.println("1. 비트코인\t22.리플");
+		System.out.println("1. 비트코인\t2.리플");
 		int select1 = sc.nextInt();
 		
 		if(select1 == 1) {
@@ -89,7 +89,7 @@ public class RunCoin {
 			
 			if(select2 <=haveBit) {
 				haveBit -= select2;
-				haveBitMoney -= select2*bitCoin.getBitCoinPrice();   //결과값이 양수면 손실 음수면 이득
+				haveBitMoney -= select2*bitCoin.getBitCoinPrice();   
 				money.setTradeMoney(0, select2*bitCoin.getBitCoinPrice());
 			}
 			else if( select2 > haveBit) {
@@ -122,14 +122,14 @@ public class RunCoin {
 			bitRevenue = 0;
 		}
 		else {
-			bitRevenue =(int)((double)((bitCoin.getBitCoinPrice()*haveBit)%(haveBitMoney))/10)*10;
+			bitRevenue = (bitCoin.getBitCoinPrice()*haveBit)-haveBitMoney;
 		}
 		
 		if(haveRip ==0) {
 			ripRevenue = 0;
 		}
 		else {
-			ripRevenue =(int)((double)((ripple.getRipplePrice()*haveRip)%(haveRipMoney))/10)*10;
+			ripRevenue = (ripple.getRipplePrice()*haveRip)-haveRipMoney;
 		}
 		System.out.println("현재 소유금 : "+formatter.format((money.getNowMoney())));
 		System.out.println("소유 비트코인 : "+formatter.format(haveBit)+", 현재손익: "+formatter.format(bitRevenue)+"원");
@@ -146,16 +146,28 @@ public class RunCoin {
 		bitCoin.setBitCoinPrice((100000+(int)(Math.random()*10000+1))-(int)(Math.random()*100000-1));
 		ripple.setRipplePrice(50000+(int)(Math.random()*50000+1)-(int)(Math.random()*50000+1));
 	}
-	
-	public void play() {
-		while(true) {
-			System.out.println("------------------");
+	public void run() {
+		while(true)
+		try {
+			Thread.sleep(5000);
+			randomPrice();
+			System.out.println("");
+			System.out.println("===================");
 			System.out.println("현재 비트코인가격 :"+formatter.format(bitCoin.getBitCoinPrice()));
 			System.out.println("현재 리플가격: "+formatter.format(ripple.getRipplePrice()));
-			System.out.println(haveBitMoney);
-			System.out.println("------------------");
+			System.out.println("===================");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void play() {
+		System.out.println("------------------");
+		System.out.println("현재 비트코인가격 :"+formatter.format(bitCoin.getBitCoinPrice()));
+		System.out.println("현재 리플가격: "+formatter.format(ripple.getRipplePrice()));
+		System.out.println("------------------");
+		while(true) {
 			menu();
-			randomPrice();
 			System.out.print("작업을 선택하세요 >>");
 			int choice = sc.nextInt();
 			sc.nextLine();

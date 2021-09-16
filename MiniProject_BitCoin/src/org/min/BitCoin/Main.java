@@ -4,9 +4,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		RunCoin rich = new RunCoin();
-		MyThread thread = new MyThread();
-		Thread th = new Thread(thread);
-		
+		Thread th = new Thread(rich);
 		th.start();
 		rich.play();
 		
